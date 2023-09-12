@@ -1,0 +1,195 @@
+<?xml version="1.0"?>
+<h:html xmlns="http://www.w3.org/2002/xforms" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:ev="http://www.w3.org/2001/xml-events" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:jr="http://openrosa.org/javarosa" xmlns:orx="http://openrosa.org/xforms">
+  <h:head>
+    <h:title>New Person</h:title>
+    <model>
+      <instance>
+        <newperson id="newperson" prefix="J1!newperson!" delimiter="#" version="1">
+          <init>
+            <parent_id/>
+            <name/>
+            <type/>
+            <type_selector/>
+            <names/>
+            <dob/>
+            <dateofb_method/>
+            <dob_method/>
+            <age_years/>
+            <age_months/>
+            <dob_calendar/>
+            <dob_approx/>
+            <dob_raw/>
+            <dob_iso/>
+            <dob_debug/>
+            <age_years_dob/>
+            <person_gender/>
+            <rship/>
+            <phone_number/>
+            <certificate/>
+            <booklet/>
+            <net/>
+          </init>
+          <meta tag="hidden">
+            <instanceID/>
+          </meta>
+        </newperson>
+      </instance>
+      <instance id="contact-summary"/>
+      <bind nodeset="/newperson/init/parent_id" type="string" readonly="true()"/>
+      <bind nodeset="/newperson/init/name" type="string"/>
+      <bind nodeset="/newperson/init/type" type="string"/>
+      <bind nodeset="/newperson/init/type_selector" type="select1"/>
+      <bind nodeset="/newperson/init/names" type="string" jr:constraintMsg="This field is required" required="true()"/>
+      <bind nodeset="/newperson/init/dob" type="string" calculate="dob_iso" required="true()"/>
+      <bind nodeset="/newperson/init/dateofb_method" type="string" calculate="dob_method"/>
+      <bind nodeset="/newperson/init/dob_method" type="select"/>
+      <bind nodeset="/newperson/init/age_years" type="int" jr:constraintMsg="Age must be between 0 and 130" constraint=". &gt;= 0 and . &lt;= 130" required="true()" relevant="selected(../dob_method,'approx')"/>
+      <bind nodeset="/newperson/init/age_months" type="int" jr:constraintMsg="Months must be between 0 and 11" constraint=". &gt;= 0 and . &lt;= 11" required="true()" relevant="selected(../dob_method,'approx')"/>
+      <bind nodeset="/newperson/init/dob_calendar" type="date" jr:constraintMsg="Date must be before today" constraint=". &lt;= now()" required="true()" relevant="not(selected(../dob_method,'approx'))"/>
+      <bind nodeset="/newperson/init/dob_approx" type="string" calculate="add-date(today(), 0- /newperson/init/age_years , 0- /newperson/init/age_months )"/>
+      <bind nodeset="/newperson/init/dob_raw" type="string" calculate="if(not(selected(  /newperson/init/dob_method ,'approx')), 
+ /newperson/init/dob_calendar ,
+ /newperson/init/dob_approx )"/>
+      <bind nodeset="/newperson/init/dob_iso" type="string" calculate="format-date-time(dob_raw,&quot;%Y-%m-%d&quot;)"/>
+      <bind nodeset="/newperson/init/dob_debug" readonly="true()" type="string" relevant="false()"/>
+      <bind nodeset="/newperson/init/age_years_dob" type="string" calculate="int((today() -  /newperson/init/dob_approx ) div 365.25)"/>
+      <bind nodeset="/newperson/init/person_gender" type="select1" required="true()"/>
+      <bind nodeset="/newperson/init/rship" type="select1" required="true()"/>
+      <bind nodeset="/newperson/init/phone_number" type="string" jr:constraintMsg="Please make sure the number is not already in use by another person and is in the format 07XX XXX XXX or 01XX XXX XXX." constraint="regex(., '^(01\d{8}|07\d{8})$')" required="false()" relevant=" /newperson/init/age_years &gt;=18 or  /newperson/init/age_years_dob &gt;=18"/>
+      <bind nodeset="/newperson/init/certificate" type="select1" jr:constraintMsg="This field is required" required="true()"/>
+      <bind nodeset="/newperson/init/booklet" type="select1" jr:constraintMsg="This field is required" required="true()"/>
+      <bind nodeset="/newperson/init/net" type="select1" jr:constraintMsg="This field is required" required="true()"/>
+      <bind nodeset="/newperson/meta/instanceID" type="string" readonly="true()" calculate="concat('uuid:', uuid())"/>
+    </model>
+  </h:head>
+  <h:body class="pages">
+    <group appearance="field-list" ref="/newperson/init">
+      <label></label>
+      <input appearance="db-object" ref="/newperson/init/parent_id">
+        <label>Belongs To</label>
+      </input>
+      <input appearance="hidden" ref="/newperson/init/name">
+        <label></label>
+      </input>
+      <input appearance="hidden" ref="/newperson/init/type">
+        <label></label>
+      </input>
+      <select1 appearance="hidden" ref="/newperson/init/type_selector">
+        <label></label>
+        <item>
+          <label>Health Facility</label>
+          <value>health_facility</value>
+        </item>
+        <item>
+          <label>Area</label>
+          <value>area</value>
+        </item>
+        <item>
+          <label>Household</label>
+          <value>household</value>
+        </item>
+        <item>
+          <label>family</label>
+          <value>family</value>
+        </item>
+      </select1>
+      <input ref="/newperson/init/names">
+        <label>Names</label>
+      </input>
+      <select appearance="columns" ref="/newperson/init/dob_method">
+        <item>
+          <label>Date of birth with current age</label>
+          <value>approx</value>
+        </item>
+      </select>
+      <input ref="/newperson/init/age_years">
+        <label>Years</label>
+      </input>
+      <input ref="/newperson/init/age_months">
+        <label>Months</label>
+      </input>
+      <input ref="/newperson/init/dob_calendar">
+        <label>Age</label>
+      </input>
+      <input ref="/newperson/init/dob_debug">
+        <label>DOB Approx: <output value=" /newperson/init/dob_approx "/>
+DOB Calendar: <output value=" /newperson/init/dob_calendar "/>
+DOB ISO: <output value=" /newperson/init/dob_iso "/></label></input>
+      <select1 appearance="columns" ref="/newperson/init/person_gender">
+        <label>Gender</label>
+        <item>
+          <label>Female</label>
+          <value>female</value>
+        </item>
+        <item>
+          <label>Male</label>
+          <value>male</value>
+        </item>
+      </select1>
+      <select1 ref="/newperson/init/rship">
+        <label>What is the relationship to the primary caregiver?</label>
+        <item>
+          <label>Spouse</label>
+          <value>spouse</value>
+        </item>
+        <item>
+          <label>Child</label>
+          <value>child</value>
+        </item>
+        <item>
+          <label>Grandchild</label>
+          <value>grandchild</value>
+        </item>
+        <item>
+          <label>Brother</label>
+          <value>brother</value>
+        </item>
+        <item>
+          <label>Sister</label>
+          <value>sister</value>
+        </item>
+        <item>
+          <label>Other</label>
+          <value>fam_other</value>
+        </item>
+      </select1>
+      <input ref="/newperson/init/phone_number">
+        <label>Phone Number for <output value=" /newperson/init/names "/></label>
+        <hint>Use one of the following formats: 07XX XXX XXX or 01XX XXX XXX</hint>
+      </input>
+      <select1 ref="/newperson/init/certificate">
+        <label>Does <output value=" /newperson/init/names "/> have certificate?</label>
+        <item>
+          <label>Yes</label>
+          <value>yes</value>
+        </item>
+        <item>
+          <label>No</label>
+          <value>no</value>
+        </item>
+      </select1>
+      <select1 ref="/newperson/init/booklet">
+        <label>Does <output value=" /newperson/init/names "/> have a mother and child health booklet?</label>
+        <item>
+          <label>Yes</label>
+          <value>yes</value>
+        </item>
+        <item>
+          <label>No</label>
+          <value>no</value>
+        </item>
+      </select1>
+      <select1 ref="/newperson/init/net">
+        <label>Did the person sleep under an insecticide treated mosquito net last night?</label>
+        <item>
+          <label>Yes</label>
+          <value>yes</value>
+        </item>
+        <item>
+          <label>No</label>
+          <value>no</value>
+        </item>
+      </select1>
+    </group>
+  </h:body>
+</h:html>

@@ -1,0 +1,14 @@
+[33mWARN No project package.json file found at /home/charm/cht-project/package.json [0m
+[33mWARN Project has no dependency on cht-conf. [0m
+[32mINFO TypeError [ERR_INVALID_URL]: Invalid URL: https://medic:password
+    at onParseError (internal/url.js:258:9)
+    at new URL (internal/url.js:334:5)
+    at getApiUrl (/usr/local/lib/node_modules/cht-conf/src/lib/get-api-url.js:36:19)
+    at module.exports (/usr/local/lib/node_modules/cht-conf/src/lib/main.js:148:38)
+    at /usr/local/lib/node_modules/cht-conf/src/bin/index.js:16:11
+    at Object.<anonymous> (/usr/local/lib/node_modules/cht-conf/src/bin/index.js:22:3)
+    at Module._compile (internal/modules/cjs/loader.js:999:30)
+    at Object.Module._extensions..js (internal/modules/cjs/loader.js:1027:10)
+    at Module.load (internal/modules/cjs/loader.js:863:32)
+    at Function.Module._load (internal/modules/cjs/loader.js:708:14) [0m
+[31mERROR Invalid URL: https://medic:password [0m
